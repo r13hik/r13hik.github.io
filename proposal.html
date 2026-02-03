@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine/Prom Date? 💕</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+            background-color: #FFB6C1; /* Soft pink */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Heart pattern background using SVG */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M25,40 C25,40 10,30 10,20 C10,15 12,12 15,12 C18,12 20,14 22,17 C22,17 23,19 25,19 C27,19 28,17 28,17 C30,14 32,12 35,12 C38,12 40,15 40,20 C40,30 25,40 25,40 Z' fill='%23FF1493' opacity='0.6'/%3E%3C/svg%3E");
+            background-size: 50px 50px;
+            background-position: 0 0;
+            pointer-events: none;
+        }
+
+        /* Additional scattered hearts */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30,48 C30,48 12,36 12,24 C12,18 15,14 18,14 C22,14 24,17 27,21 C27,21 28,23 30,23 C32,23 33,21 33,21 C36,17 38,14 42,14 C45,14 48,18 48,24 C48,36 30,48 30,48 Z' fill='%23FF69B4' opacity='0.4'/%3E%3C/svg%3E");
+            background-size: 60px 60px;
+            background-position: 25px 25px;
+            pointer-events: none;
+        }
+
+        /* Main card container */
+        .card {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 80px;
+            box-shadow: 0 20px 60px rgba(255, 20, 147, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+
+        /* Question text */
+        .question {
+            font-size: 2.2rem;
+            color: #FF1493;
+            margin-bottom: 40px;
+            font-weight: bold;
+            line-height: 1.4;
+            transition: all 0.5s ease;
+        }
+
+        /* Success message (hidden initially) */
+        .success-message {
+            font-size: 3.5rem;
+            color: #FF1493;
+            font-weight: bold;
+            margin-bottom: 30px;
+            display: none;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Button container */
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* Base button styles */
+        button {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            border: none;
+            outline: none;
+        }
+
+        /* Yes button */
+        #yesBtn {
+            background-color: #FF1493;
+            color: white;
+            border: 3px solid #FF1493;
+            transform-origin: center;
+            animation: growYes 20s linear infinite;
+        }
+
+        #yesBtn:hover {
+            background-color: #FF69B4;
+            border-color: #FF69B4;
+            transform: scale(1.05);
+        }
+
+        /* Yes button growing animation */
+        @keyframes growYes {
+            0% { transform: scale(1); }
+            100% { transform: scale(2); }
+        }
+
+        /* No button */
+        #noBtn {
+            background-color: white;
+            color: #FF1493;
+            border: 3px solid #FF1493;
+            position: relative; /* Relative initially, will change to fixed on first hover */
+            z-index: 100;
+        }
+
+        #noBtn:hover {
+            background-color: #FFE4E1;
+        }
+
+        /* Image container (hidden initially) */
+        .image-container {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Confetti canvas */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            display: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .card {
+                padding: 40px 30px;
+            }
+
+            .question {
+                font-size: 1.6rem;
+            }
+
+            .success-message {
+                font-size: 2.5rem;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Main card -->
+    <div class="card">
+        <!-- Question text (initial state) -->
+        <div class="question" id="questionText">
+            Hi Anuvrinda,<br>Will you be my Valentine/Prom Date?
+        </div>
+
+        <!-- Success message (hidden initially) -->
+        <div class="success-message" id="successMessage">
+            YAYYYYYYYYYY!!
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-container" id="buttonContainer">
+            <button id="yesBtn">Yes! 💕</button>
+            <button id="noBtn">No</button>
+        </div>
+
+        <!-- Image container (hidden initially) -->
+        <div class="image-container" id="imageContainer">
+            <!-- 
+                REPLACE THE src ATTRIBUTE BELOW WITH YOUR OWN IMAGE URL
+                Example: src="your-image.jpg" or src="https://example.com/image.jpg"
+            -->
+            <img src="/Users/richikchakraborty/Desktop/val/cat.gif" 
+                 alt="Celebration Image"
+                 id="celebrationImage">
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const questionText = document.getElementById('questionText');
+        const successMessage = document.getElementById('successMessage');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const imageContainer = document.getElementById('imageContainer');
+        const confettiCanvas = document.getElementById('confettiCanvas');
+
+        // Track if No button has been hovered
+        let noBtnHovered = false;
+
+        // No button - move to random position on hover
+        noBtn.addEventListener('mouseenter', function() {
+            // Change to fixed positioning on first hover
+            if (!noBtnHovered) {
+                noBtn.style.position = 'fixed';
+                noBtnHovered = true;
+            }
+            moveNoButton();
+        });
+
+        // Also handle touch events for mobile
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            if (!noBtnHovered) {
+                noBtn.style.position = 'fixed';
+                noBtnHovered = true;
+            }
+            moveNoButton();
+        });
+
+        function moveNoButton() {
+            // Get viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            // Calculate random position ensuring button stays fully visible
+            const maxX = viewportWidth - btnWidth - 20; // 20px margin
+            const maxY = viewportHeight - btnHeight - 20;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            // Apply new position
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // Yes button - trigger celebration
+        yesBtn.addEventListener('click', function() {
+            // Hide question text and buttons
+            questionText.style.display = 'none';
+            buttonContainer.style.display = 'none';
+            
+            // Show success message
+            successMessage.style.display = 'block';
+            
+            // Show image container after a short delay
+            setTimeout(() => {
+                imageContainer.style.display = 'block';
+            }, 500);
+            
+            // Trigger confetti
+            launchConfetti();
+        });
+
+        // Confetti animation
+        function launchConfetti() {
+            const canvas = confettiCanvas;
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Confetti particles array
+            const confettiPieces = [];
+            const confettiCount = 150;
+            const colors = ['#FF1493', '#FF69B4', '#FFB6C1', '#FFC0CB', '#FF6347', '#FFD700', '#FF4500'];
+            
+            // Create confetti pieces
+            for (let i = 0; i < confettiCount; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5,
+                    velocityX: Math.random() * 4 - 2,
+                    velocityY: Math.random() * 3 + 2,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                let stillFalling = false;
+                
+                confettiPieces.forEach((piece) => {
+                    // Update position
+                    piece.x += piece.velocityX;
+                    piece.y += piece.velocityY;
+                    piece.rotation += piece.rotationSpeed;
+                    
+                    // Check if still on screen
+                    if (piece.y < canvas.height + 20) {
+                        stillFalling = true;
+                    }
+                    
+                    // Draw confetti piece
+                    ctx.save();
+                    ctx.translate(piece.x, piece.y);
+                    ctx.rotate(piece.rotation * Math.PI / 180);
+                    ctx.fillStyle = piece.color;
+                    ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+                    ctx.restore();
+                });
+                
+                // Continue animation if confetti still falling
+                if (stillFalling) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Hide canvas after confetti is done
+                    setTimeout(() => {
+                        canvas.style.display = 'none';
+                    }, 1000);
+                }
+            }
+            
+            animate();
+        }
+
+        // Handle window resize for canvas
+        window.addEventListener('resize', () => {
+            if (confettiCanvas.style.display === 'block') {
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
